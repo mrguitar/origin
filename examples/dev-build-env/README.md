@@ -1,9 +1,54 @@
-# Developer Build Environment
+# Development Build Environment
 
-Components:
+A continuous integration and delivery pipeine in a box to help develop docker images. It uses OpenShift v3 and Jenkins.
 
-- OpenShift template
-- Jenkins job template
+## Local setup
+
+1. Start the atomic app to deploy OpenShift and Jenkins master.
+
+```
+[sudo] atomic run aweiteka/dev-environment
+```
+
+1. Configure OpenShift. See [reference instructions](https://github.com/openshift/origin#getting-started). Enter the container to use the OpenShift CLI.
+
+```
+$ sudo docker exec -it origin bash
+```
+
+1. Create a registry
+
+```
+$ oadm registry --credentials=./openshift.local.config/master/openshift-registry.kubeconfig
+```
+
+1. Login using default credentials.
+
+```
+$ oc login
+Username: test
+Password: test
+```
+
+1. Create a project
+
+```
+$ oc new-project test
+```
+
+1. Create all of the OpenShift resources from the template
+
+```
+oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build-env/examples/dev-build-env/ose-build-template.yaml
+```
+
+1. In the [OpenShift web interface](https://localhost:8443) create a new instance of the template you uploaded.
+
+1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-job` to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
+
+```
+jenkins-jobs --conf jenkins-jobs.conf update jenkins-jobs.yaml
+```
 
 ## Bash Notes
 
