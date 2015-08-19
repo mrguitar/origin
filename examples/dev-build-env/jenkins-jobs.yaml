@@ -1,0 +1,28 @@
+- defaults:
+    name: global
+    mail-to: aweiteka@redhat.com
+    description: 'A jenkins-jobs template to create jobs in Jenkins. Do not edit this job through the web.'
+    source_uri: 'https://github.com/projectatomic/atomicapp/'
+
+- project:
+   name: automated-builds
+   jobs:
+    - '{name}-unittest'
+#    - time-based (@hourly?) refresh image streams
+#    - time-based or other trigger to scan for image vulerabilities
+#    - dockerfile linter
+#    - unittest "make test"
+#    - update jenkins-jobs based on commit
+#    - functional test of built container
+#    - build job triggered by image scan, etc
+#    - teardown job
+
+
+- job-template:
+    name: '{name}-unittest'
+    description: 'Run source control'
+    builders:
+      - shell: 'python -m pytest -vv tests --cov atomicapp --cov-report=xml --junit-xml=result.xml'
+    publishers:
+    - email:
+        recipients: '{mail-to}'
