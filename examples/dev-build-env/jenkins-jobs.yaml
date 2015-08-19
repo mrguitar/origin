@@ -20,7 +20,7 @@
 
 - job-template:
     name: '{name}-unittest'
-    description: 'Run source control'
+    description: 'Run source unit tests'
     builders:
       - shell: 'python -m pytest -vv tests --cov atomicapp --cov-report=xml --junit-xml=result.xml'
     publishers:

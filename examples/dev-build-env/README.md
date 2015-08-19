@@ -6,49 +6,35 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 
 1. Start the atomic app to deploy OpenShift and Jenkins master.
 
-```
-[sudo] atomic run aweiteka/dev-environment
-```
+        [sudo] atomic run aweiteka/dev-environment
 
 1. Configure OpenShift. See [reference instructions](https://github.com/openshift/origin#getting-started). Enter the container to use the OpenShift CLI.
 
-```
-$ sudo docker exec -it origin bash
-```
+        $ sudo docker exec -it origin bash
 
 1. Create a registry
 
-```
-$ oadm registry --credentials=./openshift.local.config/master/openshift-registry.kubeconfig
-```
+        $ oadm registry --credentials=./openshift.local.config/master/openshift-registry.kubeconfig
 
 1. Login using default credentials.
 
-```
-$ oc login
-Username: test
-Password: test
-```
+        $ oc login
+        Username: test
+        Password: test
 
 1. Create a project
 
-```
-$ oc new-project test
-```
+        $ oc new-project test
 
 1. Create all of the OpenShift resources from the template
 
-```
-oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build-env/examples/dev-build-env/ose-build-template.yaml
-```
+        oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build-env/examples/dev-build-env/ose-build-template.yaml
 
 1. In the [OpenShift web interface](https://localhost:8443) create a new instance of the template you uploaded.
 
 1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-job` to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
 
-```
-jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
-```
+        jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
 
 ## Bash Notes
 
