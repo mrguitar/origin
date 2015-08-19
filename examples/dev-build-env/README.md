@@ -4,7 +4,12 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 
 ## Local setup
 
-1. Start the atomic app to deploy OpenShift and Jenkins master.
+1. Create an `answers.conf` file with these contents
+
+        [general]
+        provider = docker
+
+1. Run this command from the same directory as the answers.conf file. W'ere starting the atomic app to deploy OpenShift and Jenkins master.
 
         [sudo] atomic run aweiteka/dev-environment
 
@@ -25,6 +30,10 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 1. Create a project
 
         $ oc new-project test
+
+1. Create image stream. We're using centos here.
+
+        $ oc import-image centos --from centos --confirm
 
 1. Create all of the OpenShift resources from the template
 

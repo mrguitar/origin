@@ -8,14 +8,19 @@
    name: automated-builds
    jobs:
     - '{name}-unittest'
-#    - time-based (@hourly?) refresh image streams
-#    - time-based or other trigger to scan for image vulerabilities
-#    - dockerfile linter
 #    - unittest "make test"
+#    - dockerfile linter (part of unit test checks)
+#      requires: can run in its own container or a slave or...?
+#    - time-based (@hourly?) refresh image streams
+#      requires: oc cmds
+#    - time-based or other trigger to scan for image vulerabilities
+#      requires: run from image scan image. how do we access the images or containers?
+#                we want to run on all of the image streams
 #    - update jenkins-jobs based on commit
 #    - functional test of built container
 #    - build job triggered by image scan, etc
 #    - teardown job
+#    - tag image based on functional test success
 
 
 - job-template:
@@ -26,3 +31,4 @@
     publishers:
     - email:
         recipients: '{mail-to}'
+
