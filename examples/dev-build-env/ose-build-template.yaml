@@ -23,6 +23,19 @@ objects:
         Name: "${BUILD_IMAGE_TAG}"
   status:
     dockerImageRepository: ''
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: "${BASE_DOCKER_IMAGE}"
+    creationTimestamp:
+  spec:
+    tags:
+    - name: "${BASE_DOCKER_IMAGE_TAG}"
+      from:
+        Kind: ImageStreamTag
+        Name: "${BUILD_IMAGE_TAG}"
+  status:
+    dockerImageRepository: ''
 - kind: BuildConfig
   apiVersion: v1
   metadata:
