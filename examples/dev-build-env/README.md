@@ -47,7 +47,7 @@ oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build
 1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-job` to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
 
 ```
-jenkins-jobs --conf jenkins-jobs.conf update jenkins-jobs.yaml
+jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
 ```
 
 ## Bash Notes
