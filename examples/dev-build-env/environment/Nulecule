@@ -1,0 +1,25 @@
+---
+specversion: 0.0.2
+id: dev-build-env-app
+
+metadata:
+  name: OpenShift Build Environment App
+  appversion: 0.0.1
+  description: Deploys a complex development and build environment for docker images based on OpenShift v3
+graph:
+  - name: jenkins-master-app
+    params:
+      - name: jenkinsimage
+        description: Jenkins Master
+        default: aweiteka/jenkins-master:v1.1
+    artifacts:
+      docker:
+        - file://artifacts/docker/jenkins-run
+  - name: openshift-origin
+    params:
+      - name: openshiftimage
+        description: OpenShift Origin v3 all-in-one
+        default: openshift/origin
+    artifacts:
+      docker:
+        - file://artifacts/docker/openshift-run
