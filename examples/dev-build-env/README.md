@@ -13,6 +13,15 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 
         [sudo] atomic run aweiteka/dev-environment
 
+1. If that doesn't work just run these docker commands:
+
+        docker run -d --name jenkins-master-appinfra \
+            -p 80:8080 -p 41000:41000 aweiteka/jenkins-master:v1.1
+        docker run -d --name origin --privileged --net=host \
+            -v /:/rootfs:ro -v /var/run:/var/run:rw \
+            -v /sys:/sys:ro -v /var/lib/docker:/var/lib/docker:rw \
+            -v /var/lib/openshift/openshift.local.volumes:/var/lib/openshift/openshift.local.volumes openshift/origin start
+
 1. Configure OpenShift. See [reference instructions](https://github.com/openshift/origin#getting-started). Enter the container to use the OpenShift CLI.
 
         $ sudo docker exec -it origin bash
