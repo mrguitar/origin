@@ -2,7 +2,14 @@
     name: global
     mail-to: aweiteka@redhat.com
     description: 'A jenkins-jobs template to create jobs in Jenkins. Do not edit this job through the web.'
-    source_uri: 'https://github.com/projectatomic/atomicapp/'
+- scm:
+    name: scm-defaults
+    scm:
+      - git:
+          url: 'https://github.com/projectatomic/atomicapp/'
+          branches:
+           - origin/master
+          skip-tag: true
 
 - project:
    name: automated-builds
@@ -27,8 +34,13 @@
     name: '{name}-unittest'
     description: 'Run source unit tests'
     builders:
+      - shell: 'pip install -r requirements.txt'
+      - shell: 'pip install pytest-cov coveralls'
       - shell: 'python -m pytest -vv tests --cov atomicapp --cov-report=xml --junit-xml=result.xml'
     publishers:
-    - email:
-        recipients: '{mail-to}'
+    - archive:
+        artifacts: '**/**'
+        allow-empty: 'true'
+    scm:
+      - scm-defaults
 
