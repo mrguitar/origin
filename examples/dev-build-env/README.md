@@ -40,7 +40,7 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 
         $ oc new-project test
 
-1. Create image stream. We're using centos here.
+1. Create image stream. We're using centos here. (TODO: automate this in the OSE template)
 
         $ oc import-image centos --from centos --confirm
 
@@ -49,10 +49,16 @@ A continuous integration and delivery pipeine in a box to help develop docker im
         oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build-env/examples/dev-build-env/ose-build-template.yaml
 
 1. In the [OpenShift web interface](https://localhost:8443) create a new instance of the template you uploaded.
+  1. Login with credentials test/test
+  1. Select "test" project
+  1. Select "Add to Project", "Browse all templates..." and select the "automated-builds" template.
+  1. Select "Edit Parameters", edit the form and select "Create".
 
-1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-job` to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
+1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-jobs` (TODO: provide jenkins-jobs tool or a way to exec into the jenkins master) to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
 
         jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
+
+
 
 ## Bash Notes
 
@@ -79,16 +85,26 @@ oc process -f automated-builds.json -v SOURCE_URI=https://github.com/aweiteka/te
 ### NOTES:
 
 # delete resources in bulk
-oc delete dc,builds,bc,is -l template=automated-build
+oc delete all -l template=automated-build
 
 # remote trigger (from jenkins job, for example)
 # build, deploy, etc.
 curl -X POST <url> [--insecure]
 
-# cron cmd to update image streams from remote registries
-oc import-image <imagestream>
-
 # after test promote image with new tag
 # from jenkins?
 oc tag ${BUILD_IMAGE_NAME}:${BUILD_IMAGE_TAG} ${BUILD_IMAGE_NAME}:<new-tag>
+
+# export local OSE resources as template
+oc export all --all -o json --as-template myproject > myproject.json
+
+# import on another openshift server
+oc new-app -f myproject.json
 ```
+
+## Jenkins Master modifications
+
+1. run as root(?) http://stackoverflow.com/questions/29926773/run-shell-command-in-jenkins-as-root-user
+1. list plugins
+1. need `oc` CLI. Download release binary and copy `oc` to `/usr/bin/oc`, `chmod 755 /usr/bin/oc`.
+
