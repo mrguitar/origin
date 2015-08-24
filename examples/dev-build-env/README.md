@@ -2,27 +2,18 @@
 
 A continuous integration and delivery pipeine in a box to help develop docker images. It uses OpenShift v3 and Jenkins.
 
-## Local setup
+## Local Development setup
 
-1. Create an `answers.conf` file with these contents
+We're using OpenShift all-in-one container deployment method. See [Getting Started](https://github.com/openshift/origin/#getting-started) instructions.
 
-        [general]
-        provider = docker
+1. Run OpenShift all-in-one as a container
 
-1. Run this command from the same directory as the answers.conf file. W'ere starting the atomic app to deploy OpenShift and Jenkins master.
-
-        [sudo] atomic run aweiteka/dev-environment
-
-1. If that doesn't work just run these docker commands:
-
-        docker run -d --name jenkins-master-appinfra \
-            -p 80:8080 -p 41000:41000 aweiteka/jenkins-master:v1.1
         docker run -d --name origin --privileged --net=host \
             -v /:/rootfs:ro -v /var/run:/var/run:rw \
             -v /sys:/sys:ro -v /var/lib/docker:/var/lib/docker:rw \
             -v /var/lib/openshift/openshift.local.volumes:/var/lib/openshift/openshift.local.volumes openshift/origin start
 
-1. Configure OpenShift. See [reference instructions](https://github.com/openshift/origin#getting-started). Enter the container to use the OpenShift CLI.
+1. Enter the container to use the OpenShift CLI.
 
         $ sudo docker exec -it origin bash
 
@@ -40,24 +31,46 @@ A continuous integration and delivery pipeine in a box to help develop docker im
 
         $ oc new-project test
 
-1. Create image stream. We're using centos here. (TODO: automate this in the OSE template)
-
-        $ oc import-image centos --from centos --confirm
-
-1. Create all of the OpenShift resources from the template
+1. Upload the OpenShift template. This will make the template available to instantiate.
 
         oc create -n test -f https://raw.githubusercontent.com/aweiteka/origin/dev-build-env/examples/dev-build-env/ose-build-template.yaml
 
-1. In the [OpenShift web interface](https://localhost:8443) create a new instance of the template you uploaded.
-  1. Login with credentials test/test
-  1. Select "test" project
-  1. Select "Add to Project", "Browse all templates..." and select the "automated-builds" template.
-  1. Select "Edit Parameters", edit the form and select "Create".
+ In the [OpenShift web interface](https://localhost:8443) create a new instance of the template you uploaded.
 
-1. Copy the Jenkins Job Builder template to your source repository and edit. Run `jenkins-jobs` (TODO: provide jenkins-jobs tool or a way to exec into the jenkins master) to create a whole pile of jenkins jobs. See the results in the [Jenkins web interface](http://localhost).
+1. Login with credentials test/test
+1. Select "test" project
+1. Select "Add to Project", "Browse all templates..." and select the "automated-builds" template.
+1. Select "Edit Parameters", edit the form and select "Create".
+
+This creates a whole pile of resources: image streams, test deployment, a Jenkin master and the appropriate services and routes to access these resources.
+
+When the Jenkins master is deployed we need to get the service IP address and port.
+
+* OpenShift web UI: navigate to Browse, Services
+* CLI: `oc get service jenkins`
+
+**Note**: If you are not on the same host you'll need to [deploy and configure a router](https://docs.openshift.org/latest/admin_guide/install/deploy_router.html).
+
+
+## Jenkins setup
+
+Now we're ready to create jobs in the Jenkins master. We'll use Jenkins Job builder to define the jobs then render them using a CLI tool.
+
+1. Copy the Jenkins Job Builder template to your source repository and edit.
+1. Get the Jenkins pod name
+
+        oc get pods
+
+1. Enter the jenkins container. We'll do this once to gain access to the jenkins-jobs CLI.
+
+        oc exec -it <jenkins_pod_name> bash
+
+1. Edit the jenkins-jobs config file `config/jenkins-jobs.ini` changing the jenkins master service IP address.
+1. Run `jenkins-jobs` (TODO: provide jenkins-jobs tool or a way to exec into the jenkins master) to create a whole pile of jenkins jobs.
 
         jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
 
+1. Using a browser load the Jenkins web UI using the Jenkins service IP address and port. Default credentials are admin/password.
 
 
 ## Bash Notes
