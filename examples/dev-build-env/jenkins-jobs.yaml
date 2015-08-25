@@ -35,7 +35,10 @@
 #    - time-based or other trigger to scan for image vulerabilities
 #      requires: run from image scan image. how do we access the images or containers?
 #                we want to run on all of the image streams
-#    - functional test of built container
+#                image-scanner-remote -p localhost -s centos:centos7
+#                curl -X GET localhost:5001/image-scanner/api/test
+#
+#    - functional test of built, running container
 #    - build job triggered by image scan, etc
 #    - teardown job
 #    - tag image based on functional test success
@@ -76,9 +79,9 @@
     scm:
       - scm-defaults
     builders:
-      - shell: 'yum install -y npm'
-      - shell: 'npm install git+https://github.com/projectatomic/dockerfile_lint'
-      - shell: '/root/node_modules/dockerfile_lint/bin/dockerfile_lint -f Dockerfile'
+      - shell: 'sudo yum install -y npm'
+      - shell: 'sudo npm install git+https://github.com/projectatomic/dockerfile_lint'
+      - shell: 'sudo /root/node_modules/dockerfile_lint/bin/dockerfile_lint -f Dockerfile'
 
 - job-template:
     name: '{name}-update-jobs-from-yaml'

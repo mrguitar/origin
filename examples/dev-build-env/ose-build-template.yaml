@@ -180,6 +180,73 @@ objects:
         restartPolicy: "Always"
         dnsPolicy: "ClusterFirst"
       status: {}
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: image-scanner
+  spec:
+    template:
+      metadata:
+        labels:
+          name: image-scanner
+      spec:
+        containers:
+        - name: image-scanner
+          image: "${SCANNER_IMAGE}"
+          env:
+          - name: container
+            value: docker
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - name: proc
+          mountPath: /hostproc/
+        - name: cgroup
+          mountPath: /sys/fs/cgroup
+        - name: run
+          mountPath: run
+        - name: devmapper
+          mountPath: /var/lib/docker/devicemapper/metadata/
+        - name: dev
+          mountPath: /dev
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc/
+      - name: cgroup
+        hostPath:
+          path: /sys/fs/cgroup
+      - name: run
+        hostPath:
+          path: /run
+      - name: devmapper
+        hostPath:
+          path: /var/lib/docker/devicemapper/metadata/
+      - name: dev
+        hostPath:
+          path: /dev
+    replicas: 1
+    selector:
+      name: image-scanner
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: image-scanner
+    creationTimestamp: null
+  spec:
+    ports:
+    - name: image-scanner
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+    selector:
+      name: image-scanner
+    portalIP: ""
+    type: ClusterIP
+    sessionAffinity: None
+  status:
+    loadBalancer: {}
+
 parameters:
 - name: NAME
   description: Image workflow name
@@ -210,6 +277,9 @@ parameters:
 - name: JENKINS_SERVICE_NAME
   description: Jenkins service name
   value: jenkins
+- name: SCANNER_IMAGE
+  description: Image scanner docker image
+  value: aweiteka/image-scanner
 - name: GIT_SECRET
   description: Git repo callback token
   generate: expression

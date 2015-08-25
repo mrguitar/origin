@@ -66,6 +66,9 @@ Now we're ready to create jobs in the Jenkins master. We'll use Jenkins Job buil
         oc exec -it <jenkins_pod_name> bash
 
 1. Edit the jenkins-jobs config file `config/jenkins-jobs.ini` changing the jenkins master service IP address.
+1. Add plugins (TODO: bundle these in jenkins master plugin)
+  1. In the jenkins master web UI navigate to "manage jenkins" > "Jenkins Plugins" > "Available" tab
+  1. Select "git plugin", "git client plugin", "URL SCM plugin", "Poll SCM plugin", "Clone Workspace SCM Plug-in"
 1. Run `jenkins-jobs` (TODO: provide jenkins-jobs tool or a way to exec into the jenkins master) to create a whole pile of jenkins jobs.
 
         jenkins-jobs --conf config/jenkins-jobs.ini --ignore-cache update jenkins-jobs.yaml
@@ -120,4 +123,6 @@ oc new-app -f myproject.json
 1. run as root(?) http://stackoverflow.com/questions/29926773/run-shell-command-in-jenkins-as-root-user
 1. list plugins
 1. need `oc` CLI. Download release binary and copy `oc` to `/usr/bin/oc`, `chmod 755 /usr/bin/oc`.
+1. issues running in OSE. Workaround: run as standalone container image
 
+        sudo docker run -d --name jenkins --privileged -v `pwd`:/root/jjb -p 80:8080 docker-registry.usersys.redhat.com/appinfra-ci/jenkins-master-appinfra
