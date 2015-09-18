@@ -18,5 +18,5 @@ FROM openshift/origin-base
 
 RUN yum install -y --enablerepo=centosplus gettext automake make docker
 ENV HOME /root
-ADD ./build.sh /tmp/build.sh
-CMD ["/tmp/build.sh"]
+ADD ./push-external.sh /tmp/push-external.sh
+CMD ["/tmp/push-external.sh"]
