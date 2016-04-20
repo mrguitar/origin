@@ -12,9 +12,9 @@ echo "Installing using hostname ${INSTALL_HOST}"
 
 # write out configuration
 openshift start --write-config /etc/origin/ \
-  --etcd-dir /var/lib/origin/etcd
-  --volume-dir /var/lib/origin/volumes
-  --public-master ${INSTALL_HOST}
+  --etcd-dir /var/lib/origin/etcd \
+  --volume-dir /var/lib/origin/volumes \
+  --public-master ${INSTALL_HOST} \
   --hostname ${INSTALL_HOST}
 
 echo "Copy files to host"
